@@ -23,12 +23,7 @@ window.addEventListener("DOMContentLoaded", function () {
   renderPendientes();
   renderHistorial();
 
-  // Service Worker
-  if ("serviceWorker" in navigator) {
-    navigator.serviceWorker.register("./sw.js").catch(function (err) {
-      console.log("SW no registrado:", err);
-    });
-  }
+  // El Service Worker se registra directamente en index.html para PWABuilder
 
   // Cerrar modal con Escape
   document.addEventListener("keydown", function (e) {
