@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+  <meta name="theme-color" content="#2563eb" />
+  <title>Mercado Familiar Pro</title>
+  <link rel="manifest" href="manifest.json" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+
+  <header class="app-header">
+    <div class="header-content">
+      <h1>🛒 Mercado Pro</h1>
+      <div class="header-actions">
+        <button class="ghost small" id="btnQR" title="Sincronizar con QR">📡</button>
+        <button class="ghost small" id="btnShare" title="Compartir lista">📤</button>
+      </div>
+    </div>
+    <p id="familiaTitulo" class="familia-titulo">Configura tu familia</p>
+  </header>
+
+  <main class="container">
+
+    <!-- Familia -->
+    <section class="card" id="sec-familia">
+      <div class="row">
+        <input id="familiaNombre" type="text" placeholder="Nombre familia (ej. Los Pérez)" />
+        <button id="btnCrearFamilia">Guardar</button>
+      </div>
+    </section>
+
+    <!-- Filtros -->
+    <section class="card filters-section" id="sec-filtros">
+      <input type="search" id="buscador" placeholder="🔍 Buscar producto..." />
+      <div class="category-scroll" id="categoryContainer">
+        <button class="cat-chip active" data-cat="Todos">🏷️ Todos</button>
+        <button class="cat-chip" data-cat="Frutas">🍎 Frutas</button>
+        <button class="cat-chip" data-cat="Verduras">🥦 Verduras</button>
+        <button class="cat-chip" data-cat="Lácteos">🥛 Lácteos</button>
+        <button class="cat-chip" data-cat="Carnes">🥩 Carnes</button>
+        <button class="cat-chip" data-cat="Limpieza">🧼 Limpieza</button>
+        <button class="cat-chip" data-cat="Bebidas">🥤 Bebidas</button>
+        <button class="cat-chip" data-cat="Otros">📦 Otros</button>
+      </div>
+    </section>
+
+    <!-- Agregar -->
+    <section class="card" id="sec-agregar">
+      <h2>➕ Nuevo Producto</h2>
+      <form id="formProducto" class="grid-form">
+        <input id="productoNombre" type="text" placeholder="Producto" required />
+        <select id="productoCategoria" required>
+          <option value="" disabled selected>Categoría</option>
+          <option value="Frutas">🍎 Frutas</option>
+          <option value="Verduras">🥦 Verduras</option>
+          <option value="Lácteos">🥛 Lácteos</option>
+          <option value="Carnes">🥩 Carnes</option>
+          <option value="Limpieza">🧼 Limpieza</option>
+          <option value="Bebidas">🥤 Bebidas</option>
+          <option value="Otros">📦 Otros</option>
+        </select>
+        <input id="productoCantidad" type="number" inputmode="numeric" placeholder="Cant." min="0" required />
+        <button type="submit">Agregar</button>
+      </form>
+    </section>
+
+    <!-- Inventario -->
+    <section class="card" id="sec-inventario">
+      <div class="card-header">
+        <h2>📦 Inventario</h2>
+        <span id="countBadge" class="badge-info">0</span>
+      </div>
+      <div id="listaProductos" class="list"></div>
+      <p id="emptyInventario" class="empty">Inventario vacío</p>
+    </section>
+
+    <!-- Pendientes -->
+    <section class="card" id="sec-pendientes">
+      <div class="card-header">
+        <h2>🛒 Pendientes</h2>
+        <button class="ghost small" id="btnNotificar">🔔 Avisarme</button>
+      </div>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Producto</th>
+            <th>Cat.</th>
+            <th>Cant.</th>
+          </tr>
+        </thead>
+        <tbody id="tablaPendientesBody"></tbody>
+      </table>
+      <p id="emptyPendientes" class="empty">¡Todo listo!</p>
+      <button id="btnGuardarCompra" class="btn-full">💾 Guardar compra</button>
+    </section>
+
+    <!-- Historial -->
+    <section class="card" id="sec-historial">
+      <h2>📜 Historial</h2>
+      <ul id="historial" class="list"></ul>
+      <p id="emptyHistorial" class="empty">Sin historial</p>
+    </section>
+
+  </main>
+
+  <!-- ========== MODAL QR ========== -->
+  <div id="qrOverlay" class="modal-overlay hidden">
+    <div class="modal">
+      <button class="modal-close" id="btnCerrarModal">✕</button>
+
+      <div class="modal-tabs">
+        <button class="tab active" data-tab="generar">📡 Generar QR</button>
+        <button class="tab" data-tab="escanear">📷 Escanear QR</button>
+      </div>
+
+      <div class="tab-content" id="tabGenerar">
+        <p class="modal-desc">Escanea desde otro dispositivo para importar</p>
+        <div class="qr-box">
+          <div id="qrCanvas"></div>
+        </div>
+        <div class="qr-info">
+          <small id="qrTamanio">Calculando...</small>
+        </div>
+        <button class="btn-full" id="btnRegenerarQR">🔄 Regenerar</button>
+      </div>
+
+      <div class="tab-content hidden" id="tabEscanear">
+        <p class="modal-desc">Apunta la cámara al QR de otro dispositivo</p>
+        <div class="qr-camera-box">
+          <video id="qrVideo" autoplay playsinline></video>
+          <div class="qr-crosshair"></div>
+        </div>
+        <div class="camera-controls">
+          <button class="btn-cam" id="btnIniciarCam">▶ Iniciar cámara</button>
+          <button class="btn-cam danger" id="btnDetenerCam">⏹ Detener</button>
+        </div>
+        <p id="qrScanStatus" class="scan-status">Esperando...</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div id="toast" class="toast"></div>
+
+  <!-- QR Library CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+
+  <script src="app.js"></script>
+
+  <!-- =========================================
+       EVENT LISTENERS (al final, con DOM listo)
+       ========================================= -->
+  <script>
+    // Botones principales
+    document.getElementById("btnCrearFamilia").addEventListener("click", crearFamilia);
+    document.getElementById("formProducto").addEventListener("submit", function (e) {
+      e.preventDefault();
+      agregarProducto();
+    });
+    document.getElementById("btnGuardarCompra").addEventListener("click", guardarCompra);
+    document.getElementById("btnNotificar").addEventListener("click", activarRecordatorio);
+    document.getElementById("btnQR").addEventListener("click", abrirModalQR);
+    document.getElementById("btnShare").addEventListener("click", compartirLista);
+
+    // Modal cerrar
+    document.getElementById("btnCerrarModal").addEventListener("click", cerrarModalQR);
+
+    // Tabs del modal
+    var tabs = document.querySelectorAll(".tab");
+    for (var i = 0; i < tabs.length; i++) {
+      tabs[i].addEventListener("click", function () {
+        mostrarTab(this.getAttribute("data-tab"), this);
+      });
+    }
+
+    // Cámara
+    document.getElementById("btnIniciarCam").addEventListener("click", iniciarCamara);
+    document.getElementById("btnDetenerCam").addEventListener("click", detenerCamara);
+
+    // Regenerar QR
+    document.getElementById("btnRegenerarQR").addEventListener("click", generarQR);
+
+    // Buscador
+    document.getElementById("buscador").addEventListener("input", renderProductos);
+
+    // Filtros de categoría
+    var catChips = document.querySelectorAll(".cat-chip");
+    for (var j = 0; j < catChips.length; j++) {
+      catChips[j].addEventListener("click", function () {
+        filtrarCategoria(this.getAttribute("data-cat"), this);
+      });
+    }
+  </script>
+
+</body>
+
+</html>
