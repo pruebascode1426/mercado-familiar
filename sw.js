@@ -1,4 +1,4 @@
-const CACHE_VERSION = "v2";
+const CACHE_VERSION = "v3";
 const CACHE_NAME = `mercado-familiar-static-${CACHE_VERSION}`;
 const DYNAMIC_CACHE = `mercado-familiar-dynamic-${CACHE_VERSION}`;
 
